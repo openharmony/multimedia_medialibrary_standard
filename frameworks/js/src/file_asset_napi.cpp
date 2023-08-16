@@ -75,6 +75,8 @@ constexpr int32_t NOT_FAV = 0;
 constexpr int32_t IS_HIDDEN = 1;
 constexpr int32_t NOT_HIDDEN = 0;
 
+constexpr int32_t USER_COMMENT_MAX_LEN = 140;
+
 using CompleteCallback = napi_async_complete_callback;
 
 thread_local napi_ref FileAssetNapi::userFileMgrConstructor_ = nullptr;
@@ -3101,6 +3103,11 @@ napi_value FileAssetNapi::UserFileMgrSetUserComment(napi_env env, napi_callback_
         return nullptr;
     }
 
+    if (asyncContext->userComment.length() > USER_COMMENT_MAX_LEN) {
+        NapiError::ThrowError(env, JS_ERR_PARAMETER_INVALID, "user comment too long");
+        return nullptr;
+    }
+
     return MediaLibraryNapiUtils::NapiCreateAsyncWork(env, asyncContext, "UserFileMgrSetUserComment",
         UserFileMgrSetUserCommentExecute, UserFileMgrSetUserCommentComplete);
 }
@@ -3656,6 +3663,11 @@ napi_value FileAssetNapi::PhotoAccessHelperSetUserComment(napi_env env, napi_cal
     asyncContext->objectPtr = asyncContext->objectInfo->fileAssetPtr;
     if (asyncContext->objectPtr == nullptr) {
         NapiError::ThrowError(env, JS_ERR_PARAMETER_INVALID);
+        return nullptr;
+    }
+
+    if (asyncContext->userComment.length() > USER_COMMENT_MAX_LEN) {
+        NapiError::ThrowError(env, JS_ERR_PARAMETER_INVALID, "user comment too long");
         return nullptr;
     }
 

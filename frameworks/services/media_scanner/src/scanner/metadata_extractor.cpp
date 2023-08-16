@@ -81,28 +81,16 @@ int32_t MetadataExtractor::ExtractImageExif(std::unique_ptr<ImageSource> &imageS
     string propertyStr;
     nlohmann::json exifJson;
     uint32_t err = imageSource->GetImagePropertyInt(0, PHOTO_DATA_IMAGE_ORIENTATION, intTempMeta);
-    if (err != 0) {
-        MEDIA_WARN_LOG("Failed to get orientation info");
-    }
     exifJson[PHOTO_DATA_IMAGE_ORIENTATION] = (err == 0) ? intTempMeta: 0;
 
     err = imageSource->GetImagePropertyString(0, PHOTO_DATA_IMAGE_GPS_LONGITUDE, propertyStr);
-    if (err != 0) {
-        MEDIA_WARN_LOG("Failed to get longitude info");
-    }
     exifJson[PHOTO_DATA_IMAGE_GPS_LONGITUDE] = (err == 0) ? GetLongitudeLatitude(propertyStr): 0;
 
     err = imageSource->GetImagePropertyString(0, PHOTO_DATA_IMAGE_GPS_LATITUDE, propertyStr);
-    if (err != 0) {
-        MEDIA_WARN_LOG("Failed to get latitude info");
-    }
     exifJson[PHOTO_DATA_IMAGE_GPS_LONGITUDE] = (err == 0) ? GetLongitudeLatitude(propertyStr): 0;
 
     for (auto &exifKey : exifInfoKeys) {
         err = imageSource->GetImagePropertyString(0, exifKey, propertyStr);
-        if (err != 0) {
-            MEDIA_WARN_LOG("Failed to get %{public}s info", exifKey.c_str());
-        }
         exifJson[exifKey] = (err == 0) ? propertyStr: "";
     }
     data->SetAllExif(exifJson.dump());
