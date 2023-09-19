@@ -38,6 +38,7 @@ static void AgingLcd(AsyncTaskData *data)
     }
 }
 
+#ifdef DISTRIBUTED
 static void AgingDistributeLcd(AsyncTaskData* data)
 {
     if (data == nullptr) {
@@ -49,7 +50,9 @@ static void AgingDistributeLcd(AsyncTaskData* data)
         MEDIA_ERR_LOG("Failed to ClearRemoteLcdFormFileTable %{public}d", err);
     }
 }
+#endif
 
+#ifdef DISTRIBUTED
 static void ClearThumbnailRecordTask(AsyncTaskData* data)
 {
     if (data == nullptr) {
@@ -61,6 +64,7 @@ static void ClearThumbnailRecordTask(AsyncTaskData* data)
         MEDIA_ERR_LOG("Failed to ClearKeyAndRecordFromMap %{public}d", err);
     }
 }
+#endif
 
 int32_t ThumbnailAgingHelper::AgingLcdBatch(ThumbRdbOpt &opts)
 {
@@ -119,6 +123,7 @@ int32_t ThumbnailAgingHelper::ClearLcdFromFileTable(ThumbRdbOpt &opts)
     return E_OK;
 }
 
+#ifdef DISTRIBUTED
 int32_t ThumbnailAgingHelper::AgingDistributeLcdBatch(ThumbRdbOpt &opts)
 {
     if (opts.store == nullptr) {
@@ -169,6 +174,7 @@ int32_t ThumbnailAgingHelper::ClearRemoteLcdFromFileTable(ThumbRdbOpt &opts)
 
     return E_OK;
 }
+#endif
 
 int32_t ThumbnailAgingHelper::GetLcdCount(ThumbRdbOpt &opts, int &outLcdCount)
 {
@@ -179,7 +185,7 @@ int32_t ThumbnailAgingHelper::GetLcdCount(ThumbRdbOpt &opts, int &outLcdCount)
     }
     return E_OK;
 }
-
+#ifdef DISTRIBUTED
 int32_t ThumbnailAgingHelper::GetDistributeLcdCount(ThumbRdbOpt &opts, int &outLcdCount)
 {
     int32_t err = E_ERR;
@@ -189,6 +195,7 @@ int32_t ThumbnailAgingHelper::GetDistributeLcdCount(ThumbRdbOpt &opts, int &outL
     }
     return E_OK;
 }
+#endif
 
 int32_t ThumbnailAgingHelper::GetAgingLcdData(ThumbRdbOpt &opts, int lcdLimit, vector<ThumbnailData> &outDatas)
 {
@@ -200,6 +207,7 @@ int32_t ThumbnailAgingHelper::GetAgingLcdData(ThumbRdbOpt &opts, int lcdLimit, v
     return E_OK;
 }
 
+#ifdef DISTRIBUTED
 int32_t ThumbnailAgingHelper::GetAgingDistributeLcdData(ThumbRdbOpt &opts,
     int lcdLimit, vector<ThumbnailData> &outDatas)
 {
@@ -252,5 +260,6 @@ int32_t ThumbnailAgingHelper::ClearKeyAndRecordFromMap(ThumbRdbOpt &opts)
     }
     return E_OK;
 }
+#endif
 } // namespace Media
 } // namespace OHOS

@@ -99,7 +99,9 @@ public:
     int GetThumbnail(const std::string &uri);
 
 private:
+#ifdef DISTRIBUTED
     bool QuerySync(const std::string &networkId, const std::string &tableName);
+#endif
     int32_t HandleThumbnailOperations(MediaLibraryCommand &cmd);
     void NeedQuerySync(const std::string &networkId, OperationObject oprnObject);
     int32_t SolveInsertCmd(MediaLibraryCommand &cmd);
@@ -107,12 +109,15 @@ private:
     void ScanFile(const NativeRdb::ValuesBucket &values, const std::shared_ptr<NativeRdb::RdbStore> &rdbStore1);
     int32_t InitDeviceData();
     int32_t InitialiseThumbnailService(const std::shared_ptr<OHOS::AbilityRuntime::Context> &extensionContext);
+#ifdef DISTRIBUTED
     int32_t LcdDistributeAging();
     int32_t DistributeDeviceAging();
+#endif
     std::shared_ptr<ThumbnailService> thumbnailService_;
     int32_t RevertPendingByFileId(const std::string &fileId);
+#ifdef DISTRIBUTED
     int32_t SyncPullThumbnailKeys(const Uri &uri);
-
+#endif
     std::shared_mutex mgrSharedMutex_;
     std::shared_ptr<DistributedKv::SingleKvStore> kvStorePtr_;
     DistributedKv::DistributedKvDataManager dataManager_;

@@ -1007,6 +1007,7 @@ HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_CheckUriPermission_Test_00
         mode.c_str(), inputMode.c_str(), ret);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_LcdDistributeAging_Test_001, TestSize.Level0)
 {
     auto mediaLibraryDataManager = MediaLibraryDataManager::GetInstance();
@@ -1017,6 +1018,7 @@ HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_LcdDistributeAging_Test_00
     ret = mediaLibraryDataManager->LcdDistributeAging();
     EXPECT_EQ(ret, E_OK);
 }
+#endif
 
 HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_GetDirQuerySetMap_Test_001, TestSize.Level0)
 {
@@ -1065,6 +1067,7 @@ HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_DoAging_Test_001, TestSize
     EXPECT_EQ(ret, E_OK);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_DistributeDeviceAging_Test_001, TestSize.Level0)
 {
     auto mediaLibraryDataManager = MediaLibraryDataManager::GetInstance();
@@ -1075,6 +1078,7 @@ HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_DistributeDeviceAging_Test
     ret = mediaLibraryDataManager->DistributeDeviceAging();
     EXPECT_EQ(ret, E_FAIL);
 }
+#endif
 
 HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_NeedQuerySync_Test_001, TestSize.Level0)
 {
@@ -1226,6 +1230,7 @@ HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_GenerateThumbnails_Test_00
     EXPECT_EQ(ret, NativeRdb::E_EMPTY_VALUES_BUCKET);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_QuerySync_Test_001, TestSize.Level0)
 {
     auto mediaLibraryDataManager = MediaLibraryDataManager::GetInstance();
@@ -1238,5 +1243,6 @@ HWTEST_F(MediaLibraryDataManagerUnitTest, DataManager_QuerySync_Test_001, TestSi
     ret = mediaLibraryDataManager->QuerySync(networkIdTest, tableNameTest);
     EXPECT_EQ(ret, false);
 }
+#endif
 } // namespace Media
 } // namespace OHOS

@@ -38,11 +38,13 @@ public:
 
     static int32_t AgingLcdBatch(ThumbRdbOpt &opts);
 
+#ifdef DISTRIBUTED
     static int32_t AgingDistributeLcdBatch(ThumbRdbOpt &opts);
     static int32_t InvalidateDistributeBatch(ThumbRdbOpt &opts);
     static int32_t ClearKeyAndRecordFromMap(ThumbRdbOpt &opts);
-    static int32_t ClearLcdFromFileTable(ThumbRdbOpt &opts);
     static int32_t ClearRemoteLcdFromFileTable(ThumbRdbOpt &opts);
+#endif
+    static int32_t ClearLcdFromFileTable(ThumbRdbOpt &opts);
 private:
     static int32_t GetLcdCount(ThumbRdbOpt &opts, int &outLcdCount);
     static int32_t GetAgingLcdData(ThumbRdbOpt &opts, int LcdLimit, std::vector<ThumbnailData> &outDatas);

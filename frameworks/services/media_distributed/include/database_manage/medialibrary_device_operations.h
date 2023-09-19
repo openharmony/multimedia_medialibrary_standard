@@ -24,7 +24,9 @@
 #include <unistd.h>
 
 #include "album_asset.h"
+#ifdef DISTRIBUTED
 #include "device_manager.h"
+#endif
 #include "dm_device_info.h"
 #include "medialibrary_data_manager_utils.h"
 #include "medialibrary_db_const.h"

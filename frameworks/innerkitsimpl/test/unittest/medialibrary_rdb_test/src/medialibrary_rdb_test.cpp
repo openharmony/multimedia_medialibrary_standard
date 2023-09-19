@@ -278,13 +278,14 @@ HWTEST_F(MediaLibraryRdbTest, medialib_Transaction_test_003, TestSize.Level0)
     EXPECT_EQ(ret, E_HAS_DB_ERROR);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryRdbTest, medialib_MediaLibraryRdbStoreObserver_test_001, TestSize.Level0)
 {
     string bundleName = "medialib_MediaLibraryRdbStoreObserver_test_001";
     std::shared_ptr<MediaLibraryRdbStoreObserver> test = make_shared<MediaLibraryRdbStoreObserver>(bundleName);
     EXPECT_NE(test, nullptr);
 }
-
+#endif
 
 HWTEST_F(MediaLibraryRdbTest, medialib_ExecuteSql_test_001, TestSize.Level0)
 {

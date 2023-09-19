@@ -19,7 +19,6 @@ group("test") {
     "unittest/medialibrary_audio_operations_test:unittest",
     "unittest/medialibrary_common_utils_test:unittest",
     "unittest/medialibrary_datamanager_test:unittest",
-    "unittest/medialibrary_device_test:unittest",
     "unittest/medialibrary_fileext_test:unittest",
     "unittest/medialibrary_helper_test:unittest",
     "unittest/medialibrary_manager_utils_test:unittest",

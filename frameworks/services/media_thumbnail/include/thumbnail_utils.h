@@ -86,10 +86,12 @@ public:
 
     // KV Store
     static bool RemoveDataFromKv(const std::shared_ptr<DistributedKv::SingleKvStore> &kvStore, const std::string &key);
+#ifdef DISTRIBUTED
     static bool IsImageExist(const std::string &key, const std::string &networkId,
         const std::shared_ptr<DistributedKv::SingleKvStore> &kvStore);
     static bool DeleteLcdData(ThumbRdbOpt &opts, ThumbnailData &data);
     static bool DeleteDistributeLcdData(ThumbRdbOpt &opts, ThumbnailData &thumbnailData);
+#endif
     static bool DeleteThumbFile(ThumbnailData &data, ThumbnailType type);
     static bool DeleteDistributeThumbnailInfo(ThumbRdbOpt &opts);
 

@@ -24,7 +24,10 @@
 
 namespace OHOS {
 namespace Media {
+#ifdef DISTRIBUTED
 class MediaLibraryRdbStoreObserver;
+#endif
+
 class MediaLibraryDataCallBack;
 
 class MediaLibraryRdbStore final : public MediaLibraryUnistore {
@@ -77,7 +80,9 @@ private:
     std::condition_variable transactionCV_;
     std::atomic<bool> isInTransaction_;
     static std::shared_ptr<NativeRdb::RdbStore> rdbStore_;
+#ifdef DISTRIBUTED
     std::shared_ptr<MediaLibraryRdbStoreObserver> rdbStoreObs_;
+#endif
     std::string bundleName_{BUNDLE_NAME};
     NativeRdb::RdbStoreConfig config_{""};
 };
@@ -108,6 +113,7 @@ private:
     int32_t InsertSmartAlbumValues(const SmartAlbumValuesBucket &smartAlbum, NativeRdb::RdbStore &store);
 };
 
+#ifdef DISTRIBUTED
 class MediaLibraryRdbStoreObserver : public NativeRdb::RdbStore::RdbStoreObserver {
 public:
     explicit MediaLibraryRdbStoreObserver(const std::string &bundleName);
@@ -122,6 +128,7 @@ private:
     std::string bundleName_;
     bool isNotifyDeviceChange_;
 };
+#endif
 
 /**
  * This class is used for database transaction creation, commit, and rollback

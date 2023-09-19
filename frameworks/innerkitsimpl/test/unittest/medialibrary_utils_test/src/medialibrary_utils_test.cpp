@@ -331,6 +331,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_CleanThumbnailInfo_test_001, TestSize.L
     EXPECT_EQ(ret, false);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryUtilsTest, medialib_SyncPushTable_test_001, TestSize.Level0)
 {
     if (storePtr == nullptr) {
@@ -363,6 +364,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_SyncPullTable_test_001, TestSize.Level0
     bool ret = MediaLibrarySyncOperation::SyncPullTable(syncOpts, devices);
     EXPECT_EQ(ret, false);
 }
+#endif
 
 HWTEST_F(MediaLibraryUtilsTest, medialib_ResizeImage_test_001, TestSize.Level0)
 {
@@ -376,6 +378,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_ResizeImage_test_001, TestSize.Level0)
     EXPECT_EQ(ret, false);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryUtilsTest, medialib_WaitFor_test_001, TestSize.Level0)
 {
     MediaLibrarySyncCallback mediaLibrary;
@@ -414,6 +417,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_DeleteDistributeLcdData_test_001, TestS
     ret = ThumbnailUtils::DeleteDistributeLcdData(opts, thumbnailData);
     EXPECT_EQ(ret, true);
 }
+#endif
 
 HWTEST_F(MediaLibraryUtilsTest, medialib_DoUpdateRemoteThumbnail_test_001, TestSize.Level0)
 {
@@ -443,6 +447,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_DeleteOriginImage_test_001, TestSize.Le
     EXPECT_EQ(ret, false);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryUtilsTest, medialib_SyncPullKvstore_test_001, TestSize.Level0)
 {
     vector<string> thumbnailKeys = {"SyncPullKvstore"};
@@ -468,6 +473,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_SyncPushKvstore_test_001, TestSize.Leve
     ret = MediaLibrarySyncOperation::SyncPushKvstore(kvStorePtr, thumbnailKeys, networkId);
     EXPECT_NE(ret, DistributedKv::Status::ERROR);
 }
+#endif
 
 HWTEST_F(MediaLibraryUtilsTest, medialib_GetKvResultSet_test_001, TestSize.Level0)
 {
@@ -495,6 +501,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_RemoveDataFromKv_test_001, TestSize.Lev
     EXPECT_EQ(ret, true);
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryUtilsTest, medialib_IsImageExist_test_001, TestSize.Level0)
 {
     string networkId = "medialib_IsImageExist_test_001";
@@ -507,6 +514,7 @@ HWTEST_F(MediaLibraryUtilsTest, medialib_IsImageExist_test_001, TestSize.Level0)
     ret = ThumbnailUtils::IsImageExist(key, networkId, kvStorePtr);
     EXPECT_EQ(ret, false);
 }
+#endif
 
 HWTEST_F(MediaLibraryUtilsTest, medialib_compressImage_test_001, TestSize.Level0)
 {

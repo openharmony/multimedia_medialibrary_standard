@@ -30,7 +30,7 @@
 namespace OHOS {
 namespace Media {
 using namespace OHOS::NativeRdb;
-
+#ifdef DISTRIBUTED
 struct MediaLibrarySyncOpts {
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
     std::shared_ptr<DistributedKv::SingleKvStore> kvStore;
@@ -38,7 +38,7 @@ struct MediaLibrarySyncOpts {
     std::string bundleName;
     std::string row;
 };
-
+#endif
 class SyncStatus {
 public:
     std::condition_variable cond_;
@@ -55,7 +55,7 @@ public:
 private:
     SyncStatus status_;
 };
-
+#ifdef DISTRIBUTED
 class MediaLibrarySyncOperation {
 public:
     MediaLibrarySyncOperation() = delete;
@@ -73,6 +73,7 @@ private:
     static void GetOnlineDevices(const std::string &bundleName, const std::vector<std::string> &originalDevices,
         std::vector<std::string> &onlineDevices);
 };
+#endif
 } // namespace Media
 } // namespace OHOS
 #endif // OHOS_MEDIALIBRARY_SYNC_TABLE_H

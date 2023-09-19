@@ -14,9 +14,7 @@
  */
 #include "medialibrary_asset_operations.h"
 #define MLOG_TAG "Distributed"
-
 #include "medialibrary_sync_operation.h"
-
 #include "datashare_helper.h"
 #include "device_manager.h"
 #include "media_column.h"

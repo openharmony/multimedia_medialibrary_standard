@@ -22,7 +22,9 @@
 
 #include "cloud_sync_helper.h"
 #include "datashare_abs_result_set.h"
+#ifdef DISTRIBUTED
 #include "device_manager.h"
+#endif
 #include "distributed_kv_data_manager.h"
 #include "hitrace_meter.h"
 #include "image_packer.h"
@@ -66,6 +68,7 @@ bool ThumbnailUtils::UpdateRemotePath(string &path, const string &networkId)
     return true;
 }
 
+#ifdef DISTRIBUTED
 bool ThumbnailUtils::DeleteLcdData(ThumbRdbOpt &opts, ThumbnailData &thumbnailData)
 {
     if (thumbnailData.lcdKey.empty()) {
@@ -105,6 +108,7 @@ bool ThumbnailUtils::DeleteDistributeLcdData(ThumbRdbOpt &opts, ThumbnailData &t
 
     return true;
 }
+#endif
 
 static string GetThumbnailSuffix(ThumbnailType type)
 {
@@ -271,6 +275,7 @@ bool ThumbnailUtils::LoadImageFile(ThumbnailData &data, const bool isThumbnail, 
 
 string ThumbnailUtils::GetUdid()
 {
+#ifdef DISTRIBUTED
     static string innerUdid;
 
     if (!innerUdid.empty()) {
@@ -292,6 +297,8 @@ string ThumbnailUtils::GetUdid()
         return string();
     }
     return innerUdid;
+#endif
+    return "";
 }
 
 bool ThumbnailUtils::CompressImage(shared_ptr<PixelMap> &pixelMap, vector<uint8_t> &data)
@@ -1288,6 +1295,7 @@ bool ThumbnailUtils::DeleteOriginImage(ThumbRdbOpt &opts)
     return isDelete;
 }
 
+#ifdef DISTRIBUTED
 bool ThumbnailUtils::IsImageExist(const string &key, const string &networkId, const shared_ptr<SingleKvStore> &kvStore)
 {
     if (key.empty()) {
@@ -1325,6 +1333,7 @@ bool ThumbnailUtils::IsImageExist(const string &key, const string &networkId, co
     }
     return ret;
 }
+#endif
 
 int64_t ThumbnailUtils::UTCTimeMilliSeconds()
 {

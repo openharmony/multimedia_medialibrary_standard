@@ -23,8 +23,10 @@
 #include "ability_scheduler_interface.h"
 #include "abs_rdb_predicates.h"
 #include "datashare_abs_result_set.h"
+#ifdef DISTRIBUTED
 #include "device_manager.h"
 #include "device_manager_callback.h"
+#endif
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "media_column.h"
@@ -37,8 +39,10 @@
 #include "medialibrary_audio_operations.h"
 #include "medialibrary_bundle_manager.h"
 #include "medialibrary_common_utils.h"
+#ifdef DISTRIBUTED
 #include "medialibrary_device.h"
 #include "medialibrary_device_info.h"
+#endif
 #include "medialibrary_dir_operations.h"
 #include "medialibrary_errno.h"
 #include "medialibrary_file_operations.h"
@@ -84,8 +88,9 @@ static constexpr int REVERT_DAYS = 7;
 static constexpr int DAY_HOURS = 24;
 static constexpr int PER_HOUR_MINUTES = 60;
 static constexpr int PER_MINUTE_SECONDS = 60;
+#ifdef DISTRIBUTED
 static constexpr int MAX_QUERY_THUMBNAIL_KEY_COUNT = 20;
-
+#endif
 MediaLibraryDataManager::MediaLibraryDataManager(void)
 {
 }
@@ -156,8 +161,10 @@ int32_t MediaLibraryDataManager::InitMediaLibraryMgr(const shared_ptr<OHOS::Abil
     int32_t errCode = InitMediaLibraryRdbStore();
     CHECK_AND_RETURN_RET_LOG(errCode == E_OK, errCode, "failed at InitMediaLibraryRdbStore");
 
+#ifdef DISTRIBUTED
     errCode = InitDeviceData();
     CHECK_AND_RETURN_RET_LOG(errCode == E_OK, errCode, "failed at InitDeviceData");
+#endif
 
     MimeTypeUtils::InitMimeTypeMap();
     errCode = MakeDirQuerySetMap(dirQuerySetMap_);
@@ -176,6 +183,7 @@ int32_t MediaLibraryDataManager::InitMediaLibraryMgr(const shared_ptr<OHOS::Abil
     return E_OK;
 }
 
+#ifdef DISTRIBUTED
 int32_t MediaLibraryDataManager::InitDeviceData()
 {
     if (rdbStore_ == nullptr) {
@@ -191,6 +199,7 @@ int32_t MediaLibraryDataManager::InitDeviceData()
     }
     return E_OK;
 }
+#endif
 
 void MediaLibraryDataManager::ClearMediaLibraryMgr()
 {
@@ -208,9 +217,13 @@ void MediaLibraryDataManager::ClearMediaLibraryMgr()
         dataManager_.CloseKvStore(KVSTORE_APPID, kvStorePtr_);
         kvStorePtr_ = nullptr;
     }
+
+#ifdef DISTRIBUTED
     if (MediaLibraryDevice::GetInstance()) {
         MediaLibraryDevice::GetInstance()->Stop();
     };
+#endif
+
     if (thumbnailService_ != nullptr) {
         thumbnailService_->ReleaseService();
         thumbnailService_ = nullptr;
@@ -265,9 +278,11 @@ int32_t MediaLibraryDataManager::InitialiseKvStore()
         MEDIA_ERR_LOG("MediaLibraryDataManager::InitialiseKvStore failed %{private}d", status);
         return E_ERR;
     }
+#ifdef DISTRIBUTED
     if (!MediaLibraryDevice::GetInstance()->InitDeviceKvStore(kvStorePtr_)) {
         return E_FAIL;
     }
+#endif
     return E_OK;
 }
 
@@ -440,9 +455,11 @@ int32_t MediaLibraryDataManager::HandleThumbnailOperations(MediaLibraryCommand &
         case OperationType::AGING:
             result = thumbnailService_->LcdAging();
             break;
+#ifdef DISTRIBUTED
         case OperationType::DISTRIBUTE_AGING:
             result = DistributeDeviceAging();
             break;
+#endif
         default:
             MEDIA_ERR_LOG("bad operation type %{public}u", cmd.GetOprnType());
     }
@@ -650,6 +667,7 @@ int32_t MediaLibraryDataManager::DoAging()
     return errorCode;
 }
 
+#ifdef DISTRIBUTED
 int32_t MediaLibraryDataManager::LcdDistributeAging()
 {
     MEDIA_DEBUG_LOG("MediaLibraryDataManager::LcdDistributeAging IN");
@@ -691,6 +709,7 @@ int32_t MediaLibraryDataManager::DistributeDeviceAging()
     }
     return result;
 }
+#endif
 
 int MediaLibraryDataManager::GetThumbnail(const string &uri)
 {
@@ -751,12 +770,14 @@ void MediaLibraryDataManager::NeedQuerySync(const string &networkId, OperationOb
             break;
     }
 
+#ifdef DISTRIBUTED
     if ((oprnObject != OperationObject::ASSETMAP) && (oprnObject != OperationObject::SMART_ALBUM_ASSETS)) {
         MediaLibraryTracer tracer;
         tracer.Start("QuerySync");
         auto ret = QuerySync(networkId, tableName);
         MEDIA_INFO_LOG("MediaLibraryDataManager QuerySync result = %{private}d", ret);
     }
+#endif
 }
 
 shared_ptr<ResultSetBridge> MediaLibraryDataManager::Query(MediaLibraryCommand &cmd,
@@ -785,6 +806,7 @@ shared_ptr<ResultSetBridge> MediaLibraryDataManager::Query(MediaLibraryCommand &
     return RdbUtils::ToResultSetBridge(absResultSet);
 }
 
+#ifdef DISTRIBUTED
 int32_t MediaLibraryDataManager::SyncPullThumbnailKeys(const Uri &uri)
 {
     if (MediaLibraryDevice::GetInstance() == nullptr || !MediaLibraryDevice::GetInstance()->IsHasActiveDevice()) {
@@ -824,6 +846,7 @@ int32_t MediaLibraryDataManager::SyncPullThumbnailKeys(const Uri &uri)
         MediaFileUtils::GetNetworkIdFromUri(uri.ToString()));
     return E_SUCCESS;
 }
+#endif
 
 shared_ptr<NativeRdb::ResultSet> MediaLibraryDataManager::QueryRdb(MediaLibraryCommand &cmd,
     const vector<string> &columns, const DataSharePredicates &predicates, int &errCode)
@@ -885,6 +908,7 @@ shared_ptr<NativeRdb::ResultSet> MediaLibraryDataManager::QueryRdb(MediaLibraryC
     return queryResultSet;
 }
 
+#ifdef DISTRIBUTED
 bool MediaLibraryDataManager::QuerySync(const string &networkId, const string &tableName)
 {
     if (networkId.empty() || tableName.empty()) {
@@ -916,6 +940,7 @@ bool MediaLibraryDataManager::QuerySync(const string &networkId, const string &t
     syncOpts.bundleName = bundleName_;
     return MediaLibrarySyncOperation::SyncPullTable(syncOpts, devices);
 }
+#endif
 
 int32_t MediaLibraryDataManager::OpenFile(MediaLibraryCommand &cmd, const string &mode)
 {
@@ -994,6 +1019,7 @@ int32_t MediaLibraryDataManager::SetCmdBundleAndDevice(MediaLibraryCommand &outC
         return E_GET_CLIENTBUNDLE_FAIL;
     }
     outCmd.SetBundleName(clientBundle);
+#ifdef DISTRIBUTED
     OHOS::DistributedHardware::DmDeviceInfo deviceInfo;
     auto &deviceManager = OHOS::DistributedHardware::DeviceManager::GetInstance();
     int32_t ret = deviceManager.GetLocalDeviceInfo(bundleName_, deviceInfo);
@@ -1003,6 +1029,8 @@ int32_t MediaLibraryDataManager::SetCmdBundleAndDevice(MediaLibraryCommand &outC
         outCmd.SetDeviceName(deviceInfo.deviceName);
     }
     return ret;
+#endif
+    return 0;
 }
 
 int32_t MediaLibraryDataManager::DoTrashAging()

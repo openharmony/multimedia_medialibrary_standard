@@ -22,7 +22,9 @@
 #include "media_file_uri.h"
 #include "media_file_utils.h"
 #include "media_log.h"
+#ifdef DISTRIBUTED
 #include "medialibrary_device.h"
+#endif
 #include "medialibrary_errno.h"
 #include "medialibrary_object_utils.h"
 #include "medialibrary_tracer.h"
@@ -118,6 +120,7 @@ static int32_t ExecSqls(const vector<string> &sqls, RdbStore &store)
     return NativeRdb::E_OK;
 }
 
+#ifdef DISTRIBUTED
 void GetAllNetworkId(vector<string> &networkIds)
 {
     vector<OHOS::DistributedHardware::DmDeviceInfo> deviceList;
@@ -126,6 +129,7 @@ void GetAllNetworkId(vector<string> &networkIds)
         networkIds.push_back(deviceInfo.networkId);
     }
 }
+#endif
 
 int32_t MediaLibraryRdbStore::Insert(MediaLibraryCommand &cmd, int64_t &rowId)
 {
@@ -1332,6 +1336,7 @@ int32_t MediaLibraryDataCallBack::OnUpgrade(RdbStore &store, int32_t oldVersion,
     return NativeRdb::E_OK;
 }
 
+#ifdef DISTRIBUTED
 MediaLibraryRdbStoreObserver::MediaLibraryRdbStoreObserver(const string &bundleName)
 {
     bundleName_ = bundleName;
@@ -1370,6 +1375,7 @@ void MediaLibraryRdbStoreObserver::NotifyDeviceChange()
         isNotifyDeviceChange_ = false;
     }
 }
+#endif
 
 TransactionOperations::TransactionOperations()
 {

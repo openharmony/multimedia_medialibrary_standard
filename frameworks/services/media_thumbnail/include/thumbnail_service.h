@@ -38,11 +38,15 @@ public:
 
     THUMBNAIL_API_EXPORT int GetThumbnailFd(const std::string &uri);
     THUMBNAIL_API_EXPORT int32_t LcdAging();
+#ifdef DISTRIBUTED
     THUMBNAIL_API_EXPORT int32_t LcdDistributeAging(const std::string &udid);
+#endif
     THUMBNAIL_API_EXPORT int32_t GenerateThumbnails();
     THUMBNAIL_API_EXPORT void InterruptBgworker();
     THUMBNAIL_API_EXPORT void StopAllWorker();
+#ifdef DISTRIBUTED
     THUMBNAIL_API_EXPORT int32_t InvalidateDistributeThumbnail(const std::string &udid);
+#endif
     THUMBNAIL_API_EXPORT int32_t CreateThumbnail(const std::string &uri, const std::string &path,
         bool isSync = false);
     THUMBNAIL_API_EXPORT void InvalidateThumbnail(const std::string &id, const std::string &tableName,

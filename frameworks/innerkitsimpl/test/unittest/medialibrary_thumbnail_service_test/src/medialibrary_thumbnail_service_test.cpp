@@ -101,6 +101,7 @@ HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_LcdAging_test_001, TestSize.
     serverTest->ReleaseService();
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_LcdDistributeAging_test_001, TestSize.Level0)
 {
     if (storePtr == nullptr) {
@@ -120,6 +121,7 @@ HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_LcdDistributeAging_test_001,
     EXPECT_EQ(ret, 0);
     serverTest->ReleaseService();
 }
+#endif
 
 HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_GenerateThumbnails_test_001, TestSize.Level0)
 {
@@ -168,6 +170,7 @@ HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_StopAllWorker_test_001, Test
     serverTest->ReleaseService();
 }
 
+#ifdef DISTRIBUTED
 HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_InvalidateDistributeThumbnail_test_001, TestSize.Level0)
 {
     if (storePtr == nullptr) {
@@ -187,6 +190,7 @@ HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_InvalidateDistributeThumbnai
     EXPECT_EQ(ret, 0);
     serverTest->ReleaseService();
 }
+#endif
 
 HWTEST_F(MediaLibraryThumbnailServiceTest, medialib_CreateThumbnailAsync_test_001, TestSize.Level0)
 {

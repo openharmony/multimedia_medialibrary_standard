@@ -94,15 +94,6 @@ ohos_shared_library("medialibrary_data_extension") {
     "${MEDIALIB_SERVICES_PATH}/media_file_extension/src/media_file_extention_utils.cpp",
   ]
 
-  media_distributed_source = [
-    "${MEDIALIB_SERVICES_PATH}/media_distributed/src/database_manage/medialibrary_device_db.cpp",
-    "${MEDIALIB_SERVICES_PATH}/media_distributed/src/database_manage/medialibrary_device_operations.cpp",
-    "${MEDIALIB_SERVICES_PATH}/media_distributed/src/database_manage/medialibrary_sync_operation.cpp",
-    "${MEDIALIB_SERVICES_PATH}/media_distributed/src/device_manage/device_permission_verification.cpp",
-    "${MEDIALIB_SERVICES_PATH}/media_distributed/src/device_manage/medialibrary_device.cpp",
-    "${MEDIALIB_SERVICES_PATH}/media_distributed/src/devices_info_interact//devices_info_interact.cpp",
-  ]
-
   media_scan_source = [
     "${MEDIALIB_SERVICES_PATH}/media_scanner/src/scanner/media_scan_executor.cpp",
     "${MEDIALIB_SERVICES_PATH}/media_scanner/src/scanner/media_scanner.cpp",
@@ -155,7 +146,6 @@ ohos_shared_library("medialibrary_data_extension") {
     "src/trash_async_worker.cpp",
   ]
   sources += media_fileext_source
-  sources += media_distributed_source
   sources += media_scan_source
   sources += media_thumbnail_source
   sources += media_cloud_sync_source
@@ -187,9 +177,6 @@ ohos_shared_library("medialibrary_data_extension") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "data_share:datashare_provider",
-    "device_auth:deviceauth_sdk",
-    "device_manager:devicemanagersdk",
-    "device_security_level:dslm_sdk",
     "dfs_service:cloudsync_kit_inner",
     "eventhandler:libeventhandler",
     "file_api:filemgmt_libn",
