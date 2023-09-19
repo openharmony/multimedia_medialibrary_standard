@@ -211,10 +211,11 @@ ohos_shared_library("medialibrary_data_extension") {
 
   defines = []
   defines += [ "MEDIALIBRARY_COMPATIBILITY=1" ]
+
   if (!defined(global_parts_info) ||
-      defined(global_parts_info.security_security_component)) {
+      defined(global_parts_info.security_security_component_manager)) {
     defines += [ "MEDIALIBRARY_SECURITY_OPEN=1" ]
-    external_deps += [ "security_component:libsecurity_component_sdk" ]
+    external_deps += [ "security_component_manager:libsecurity_component_sdk" ]
   }
 
   sanitize = {
