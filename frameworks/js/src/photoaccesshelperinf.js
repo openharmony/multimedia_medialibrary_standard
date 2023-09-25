@@ -204,6 +204,149 @@ function getPhotoAccessHelperAsync(context, asyncCallback) {
   return undefined;
 }
 
+const PhotoViewMIMETypes = {
+  IMAGE_TYPE: 'image/*',
+  VIDEO_TYPE: 'video/*',
+  IMAGE_VIDEO_TYPE: '*/*',
+  INVALID_TYPE: ''
+}
+
+const ErrCode = {
+  INVALID_ARGS: 13900020,
+  RESULT_ERROR: 13900042,
+}
+
+const ERRCODE_MAP = new Map([
+  [ErrCode.INVALID_ARGS, 'Invalid argument'],
+  [ErrCode.RESULT_ERROR, 'Unknown error'],
+]);
+
+const PHOTO_VIEW_MIME_TYPE_MAP = new Map([
+  [PhotoViewMIMETypes.IMAGE_TYPE, 'FILTER_MEDIA_TYPE_IMAGE'],
+  [PhotoViewMIMETypes.VIDEO_TYPE, 'FILTER_MEDIA_TYPE_VIDEO'],
+  [PhotoViewMIMETypes.IMAGE_VIDEO_TYPE, 'FILTER_MEDIA_TYPE_ALL'],
+]);
+
+const ARGS_ZERO = 0;
+const ARGS_ONE = 1;
+
+function checkArguments(args) {
+  let checkArgumentsResult = undefined;
+
+  if (args.length === ARGS_TWO && typeof args[ARGS_ONE] !== 'function') {
+    checkArgumentsResult = getErr(ErrCode.INVALID_ARGS);
+  }
+
+  if (args.length > 0 && typeof args[ARGS_ZERO] === 'object') {
+    let option = args[ARGS_ZERO];
+    if (option.maxSelectNumber !== undefined) {
+      if (option.maxSelectNumber.toString().indexOf('.') !== -1) {
+        checkArgumentsResult = getErr(ErrCode.INVALID_ARGS);
+      }
+    }
+  }
+
+  return checkArgumentsResult;
+}
+
+function getErr(errCode) {
+  return { code: errCode, message: ERRCODE_MAP.get(errCode) };
+}
+
+function parsePhotoPickerSelectOption(args) {
+  let config = {
+    action: 'ohos.want.action.photoPicker',
+    type: 'multipleselect',
+    parameters: {
+      uri: 'multipleselect',
+    },
+  };
+
+  if (args.length > ARGS_ZERO && typeof args[ARGS_ZERO] === 'object') {
+    let option = args[ARGS_ZERO];
+    if (option.maxSelectNumber && option.maxSelectNumber > 0) {
+      let select = (option.maxSelectNumber === 1) ? 'singleselect' : 'multipleselect';
+      config.type = select;
+      config.parameters.uri = select;
+      config.parameters.maxSelectCount = option.maxSelectNumber;
+    }
+    if (option.MIMEType && PHOTO_VIEW_MIME_TYPE_MAP.has(option.MIMEType)) {
+      config.parameters.filterMediaType = PHOTO_VIEW_MIME_TYPE_MAP.get(option.MIMEType);
+    }
+  }
+
+  return config;
+}
+
+function getPhotoPickerSelectResult(args) {
+  let selectResult = {
+    error: undefined,
+    data: undefined,
+  };
+
+  if (args.resultCode === 0) {
+    if (args.want && args.want.parameters) {
+      let uris = args.want.parameters['select-item-list'];
+      let isOrigin = args.want.parameters.isOriginal;
+      selectResult.data = new PhotoSelectResult(uris, isOrigin);
+    }
+  } else if (result.resultCode === -1) {
+    selectResult.data = new PhotoSelectResult([], undefined);
+  } else {
+    selectResult.error = getErr(ErrCode.RESULT_ERROR);
+  }
+
+  return selectResult;
+}
+
+async function photoPickerSelect(...args) {
+  let checkArgsResult = checkArguments(args);
+  if (checkArgsResult !== undefined) {
+    console.log('[picker] Invalid argument');
+    throw checkArgsResult;
+  }
+
+  const config = parsePhotoPickerSelectOption(args);
+  console.log('[picker] config: ' + JSON.stringify(config));
+
+  try {
+    let context = getContext(this);
+    let result = await context.startAbilityForResult(config, {windowMode: 1});
+    console.log('[picker] result: ' + JSON.stringify(result));
+    const selectResult = getPhotoPickerSelectResult(result);
+    console.log('[picker] selectResult: ' + JSON.stringify(selectResult));
+    if (args.length === ARGS_TWO && typeof args[ARGS_ONE] === 'function') {
+      return args[ARGS_ONE](selectResult.error, selectResult.data);
+    } else if (args.length === ARGS_ONE && typeof args[ARGS_ZERO] === 'function') {
+      return args[ARGS_ZERO](selectResult.error, selectResult.data);
+    }
+    return new Promise((resolve, reject) => {
+      if (selectResult.data !== undefined) {
+        resolve(selectResult.data);
+      } else {
+        reject(selectResult.error);
+      }
+    })
+  } catch (error) {
+    console.log('[picker] error: ' + error);
+  }
+  return undefined;
+}
+
+function PhotoSelectOptions() {
+  this.MIMEType = PhotoViewMIMETypes.INVALID_TYPE;
+  this.maxSelectNumber = -1;
+}
+
+function PhotoSelectResult(uris, isOriginalPhoto) {
+  this.photoUris = uris;
+  this.isOriginalPhoto = isOriginalPhoto;
+}
+
+function PhotoViewPicker() {
+  this.select = photoPickerSelect;
+}
+
 export default {
   getPhotoAccessHelper,
   getPhotoAccessHelperAsync,
@@ -216,4 +359,8 @@ export default {
   PhotoSubtype: photoAccessHelper.PhotoSubtype,
   NotifyType: photoAccessHelper.NotifyType,
   DefaultChangeUri: photoAccessHelper.DefaultChangeUri,
+  PhotoViewMIMETypes: PhotoViewMIMETypes,
+  PhotoSelectOptions: PhotoSelectOptions,
+  PhotoSelectResult: PhotoSelectResult,
+  PhotoViewPicker: PhotoViewPicker,
 };
