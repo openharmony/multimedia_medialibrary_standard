@@ -1250,7 +1250,7 @@ string MediaFileUtils::Encode(const string &uri)
     const unordered_set<char> uriCompentsSet = {
         ';', ',', '/', '?', ':', '@', '&',
         '=', '+', '$', '-', '_', '.', '!',
-        '~', '*', '(', ')', '#', '\''
+        '~', '*', '(', ')', '\''
     };
     const int32_t encodeLen = 2;
     ostringstream outPutStream;
