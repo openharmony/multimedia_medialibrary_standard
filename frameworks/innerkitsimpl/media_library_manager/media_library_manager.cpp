@@ -16,6 +16,7 @@
 
 #include "media_library_manager.h"
 
+#include <charconv>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -388,10 +389,18 @@ static bool GetParamsFromUri(const string &uri, string &fileUri, const bool isOl
             path = queryKey[THUMBNAIL_PATH];
         }
         if (queryKey.count(THUMBNAIL_WIDTH) != 0) {
-            size.width = stoi(queryKey[THUMBNAIL_WIDTH]);
+            const auto &width = queryKey[THUMBNAIL_WIDTH];
+            auto result = std::from_chars(width.data(), width.data() + width.size(), size.width);
+            if (result.ec != std::errc{} || result.ptr != width.data() + width.size()) {
+                return false;
+            }
         }
         if (queryKey.count(THUMBNAIL_HEIGHT) != 0) {
-            size.height = stoi(queryKey[THUMBNAIL_HEIGHT]);
+            const auto &height = queryKey[THUMBNAIL_HEIGHT];
+            auto result = std::from_chars(height.data(), height.data() + height.size(), size.height);
+            if (result.ec != std::errc{} || result.ptr != height.data() + height.size()) {
+                return false;
+            }
         }
     }
     return true;
